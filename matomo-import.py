@@ -8,6 +8,37 @@ import requests
 
 APACHE_LOG_FILE_FORMAT =  "%{REQUEST_SCHEME}x://%v %h %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\""
 
+# Should be lower case
+EXCLUDED_USER_AGENTS = (
+    'adsbot-google',
+    'ask jeeves',
+    'baidubot',
+    'ccooter/',
+    'crawl',
+    'echoping',
+    'exabot',
+    'feed',
+    'googlebot',
+    'ia_archiver',
+    'libwww',
+    'mediapartners-google',
+    'msnbot',
+    'netcraftsurvey',
+    'panopta',
+    'pingdom.com_bot_',
+    'robot',
+    'spider',
+    'surveybot',
+    'twiceler',
+    'voilabot',
+    'yahoo',
+    'yandex',
+    'zabbix',
+    'googlestackdrivermonitoring',
+    'uptimerobot',
+    'apachebench',
+)
+
 
 def main():
 
@@ -53,7 +84,11 @@ def process_entry(config, entry):
     if not path.startswith("/api"):
         return []
 
-    # TODO Filter out known bots?
+    # Filter out known bots?
+    user_agent = entry.headers_in["User-Agent"].lower()
+    for s in EXCLUDED_USER_AGENTS:
+        if s in user_agent:
+            return []
 
     # We do want to include this line
     return [entry_to_matomo_format(config, entry)]
