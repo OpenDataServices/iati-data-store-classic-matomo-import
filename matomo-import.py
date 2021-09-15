@@ -2,6 +2,7 @@
 import argparse
 
 import apachelogs
+import requests
 
 
 
@@ -31,7 +32,9 @@ def main():
 
     entries = parse_logs(config)
 
-    [print(i) for i in entries]
+    for entry in entries:
+        print(entry)
+        send_to_matomo(config, entry)
 
 def parse_logs(config):
     entries = []
@@ -83,8 +86,12 @@ def entry_to_matomo_format(config, entry):
 
     return out
 
-
-
+def send_to_matomo(config, entry):
+    r = requests.get(config.host+'/matomo.php', params=entry)
+    if r.status_code == 200:
+        print("SUCCESS")
+    else:
+        print("FAIL STATUS=" + str(r.status_code))
 
 class Config:
     def __init__(self, file, host, token, siteid):
