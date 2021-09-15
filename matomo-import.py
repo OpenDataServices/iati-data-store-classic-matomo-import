@@ -79,9 +79,7 @@ def entry_to_matomo_format(config, entry):
         'ua': entry.headers_in["User-Agent"],
         'cip': entry.remote_host,
         'cdt': '%s %s' % (date, time.replace('-', ':')),
-
-
-
+        'queuedtracking': '0',
     }
 
     if path.startswith("/api/1/access"):
