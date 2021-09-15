@@ -84,6 +84,9 @@ def entry_to_matomo_format(config, entry):
 
     }
 
+    if path.startswith("/api/1/access"):
+        out['download'] = out['url']
+
     return out
 
 def send_to_matomo(config, entry):
