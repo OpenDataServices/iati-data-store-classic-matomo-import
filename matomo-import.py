@@ -39,6 +39,20 @@ EXCLUDED_USER_AGENTS = (
     'googlestackdrivermonitoring',
     'uptimerobot',
     'apachebench',
+    'bingbot',
+    'bingpreview',
+    'dotbot',
+    'mj12bot',
+    'iframely',
+    'seznambot',
+    'ahrefsbot',
+    'semrushbot',
+    'barkrowler',
+    'semanticscholarbot',
+    'developers.google.com',
+    'skypeuripreview',
+    'masscan-ng',
+    'ltx71.com',
 )
 
 CUSTOM_DIMENSION_BACKEND = 10
