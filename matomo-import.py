@@ -39,6 +39,11 @@ EXCLUDED_USER_AGENTS = (
     'apachebench',
 )
 
+CUSTOM_DIMENSION_BACKEND = 10
+CUSTOM_DIMENSION_FORMAT = 6
+CUSTOM_DIMENSION_HTTP_STATUS = 7
+CUSTOM_DIMENSION_METHOD = 8
+CUSTOM_DIMENSION_SIZE = 9
 
 def main():
 
@@ -100,6 +105,9 @@ def entry_to_matomo_format(config, entry):
 
     method, path, httpversion = entry.request_line.split(" ")
 
+    path_params_bits = path.split('?',2)
+    path_before_params = path_params_bits[0]
+
     url = entry.variables['REQUEST_SCHEME'] + '://' +  entry.virtual_host  + path
 
     date, time = entry.request_time.isoformat(sep=' ').split()
@@ -115,10 +123,20 @@ def entry_to_matomo_format(config, entry):
         'cip': entry.remote_host,
         'cdt': '%s %s' % (date, time.replace('-', ':')),
         'queuedtracking': '0',
+        'dimension'+str(CUSTOM_DIMENSION_BACKEND): 'backend',
+        'dimension'+str(CUSTOM_DIMENSION_HTTP_STATUS): entry.final_status,
+        'dimension'+str(CUSTOM_DIMENSION_METHOD): method,
+        'dimension'+str(CUSTOM_DIMENSION_SIZE): entry.bytes_out,
     }
 
     if path.startswith("/api/1/access"):
         out['download'] = out['url']
+        if path_before_params.endswith('.csv'):
+            out['dimension'+str(CUSTOM_DIMENSION_FORMAT)] = 'csv'
+        elif path_before_params.endswith('.xml'):
+            out['dimension'+str(CUSTOM_DIMENSION_FORMAT)] = 'xml'
+        elif path_before_params.endswith('.json'):
+            out['dimension'+str(CUSTOM_DIMENSION_FORMAT)] = 'json'
 
     return out
 
