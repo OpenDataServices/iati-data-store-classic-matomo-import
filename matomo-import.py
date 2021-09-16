@@ -9,7 +9,7 @@ import json
 
 
 
-APACHE_LOG_FILE_FORMAT =  "%{REQUEST_SCHEME}x://%v %h %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\""
+APACHE_LOG_FILE_FORMAT =  "%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\""
 
 # Should be lower case
 EXCLUDED_USER_AGENTS = (
@@ -105,6 +105,10 @@ def process_entry(config, entry):
         return []
     method, path, httpversion = entry.request_line.split(" ")
 
+    # HTTP
+    if entry.directives['%p'] == 80:
+        return []
+
     # We only want API accesses
     if not path.startswith("/api"):
         return []
@@ -129,7 +133,10 @@ def entry_to_matomo_format(config, entry):
     path_params_bits = path.split('?',2)
     path_before_params = path_params_bits[0]
 
-    url = entry.variables['REQUEST_SCHEME'] + '://' +  entry.virtual_host  + path
+    if entry.directives['%p'] == 80:
+        url = 'http://' +  entry.virtual_host  + path
+    else:
+        url = 'https://' + entry.virtual_host + path
 
     date, time = entry.request_time.isoformat(sep=' ').split()
 
@@ -167,6 +174,7 @@ def send_to_matomo(config, entry):
         print(str(datetime.datetime.now()) + " SUCCESS")
     else:
         print(str(datetime.datetime.now()) + " FAIL STATUS=" + str(r.status_code))
+        print(r.content)
 
 class Config:
     def __init__(self, file, host, token, siteid):
