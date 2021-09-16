@@ -5,6 +5,7 @@ import apachelogs
 import requests
 import datetime
 import time
+import json
 
 
 
@@ -85,7 +86,7 @@ def main():
     entries = parse_logs(config)
 
     for entry in entries:
-        print(entry)
+        print(json.dumps(entry))
         send_to_matomo(config, entry)
         time.sleep(0.5)
 
