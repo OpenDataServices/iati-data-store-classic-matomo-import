@@ -100,6 +100,8 @@ def parse_logs(config):
 
 def process_entry(config, entry):
 
+    if not entry.request_line or entry.request_line == "0":
+        return []
     method, path, httpversion = entry.request_line.split(" ")
 
     # We only want API accesses
