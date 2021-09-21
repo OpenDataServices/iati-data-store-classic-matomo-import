@@ -103,7 +103,10 @@ def process_entry(config, entry):
 
     if not entry.request_line or entry.request_line == "0":
         return []
-    method, path, httpversion = entry.request_line.split(" ")
+    entry_bits = entry.request_line.split(" ")
+    if len(entry_bits) < 3:
+        return []
+    method, path, httpversion = entry_bits
 
     # We only want API accesses
     if not path.startswith("/api"):
