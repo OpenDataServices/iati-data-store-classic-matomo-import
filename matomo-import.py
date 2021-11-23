@@ -161,6 +161,8 @@ def entry_to_matomo_format(config, entry):
             out['dimension'+str(CUSTOM_DIMENSION_FORMAT)] = 'xml'
         elif path_before_params.endswith('.json'):
             out['dimension'+str(CUSTOM_DIMENSION_FORMAT)] = 'json'
+        elif path_before_params.endswith('.xlsx'):
+            out['dimension'+str(CUSTOM_DIMENSION_FORMAT)] = 'xlsx'
 
     return out
 
